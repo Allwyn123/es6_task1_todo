@@ -1,18 +1,13 @@
 /****** create list start ******/
 function addCookie(){
     let list_data = {"list":[]};
-    // console.log(list_data);
     document.cookie = 'todo='+ JSON.stringify(list_data);
-    // document.cookie = "gogo="+ JSON.stringify(list_data);
-    // console.log(document.cookie);
-    // console.log("--------------");
 };
-// if(document.)
-// addCookie();
 
 
+const todo_list = document.querySelector(".todo_list");
 //todo obj 
-let todo_obj = "";
+let todo_obj = "none";
 function create_obj(){
     let cookie_arr = document.cookie.split("; ");
     let todo_avaiable = false;
@@ -29,10 +24,7 @@ function create_obj(){
 
     if(todo_avaiable) {
         todo_obj = JSON.parse(cookie_data[1]);
-    }
-    else {
-        addCookie();
-        create_obj();
+        load_list_data();
     }
 }
 create_obj();
@@ -40,16 +32,13 @@ console.log(todo_obj);
 //todo obj end
 
 // -------- load list data --------
-function load_list_data(){
-    console.log("load function");
-    const todo_list = document.querySelector(".todo_list");
-    const todo_list_li = document.querySelectorAll(".todo_list li");
-    
+if(todo_obj == "none"){
     todo_list.innerHTML = "";
-    // todo_list_li.forEach(function(e){
-    // });
+}
 
-    console.log(todo_obj.list.length);
+function load_list_data(){
+    todo_list.innerHTML = "";
+
     for(let i=0; i< todo_obj.list.length; i++){
         function set_attribute(element, attribute){
             Object.keys(attribute).forEach(e =>{
@@ -68,13 +57,22 @@ function load_list_data(){
 
         let label_element = document.createElement("label");
         label_element.innerHTML = todo_obj.list[i].content;
-        label_element.setAttribute("for","list"+todo_obj.list[i].id);
         label_element.setAttribute("class","list_content");
+
+        let icon_element = document.createElement("a");
+        icon_element.innerHTML = "Edit";
+        let icon_attribute = {
+            href: "#FIXME",
+            class: "list_edit",
+            title: "Edit",
+        }
+        set_attribute(icon_element, icon_attribute);
 
         let form_group_div = document.createElement("div");
         form_group_div.setAttribute("class","form_group");
         form_group_div.appendChild(input_element);
         form_group_div.appendChild(label_element);
+        form_group_div.appendChild(icon_element);
         
         let a_element =  document.createElement("a");
         a_element.setAttribute("href","#FIXME");
@@ -100,8 +98,7 @@ function load_list_data(){
         }
     }
 }
-console.log(todo_obj);
-load_list_data();
+// load_list_data();
 //--------- load list data end ----------
 
 //------------ new list data start ------------
@@ -110,6 +107,11 @@ const input_text = document.querySelector(".input_text");
 
 create_btn.addEventListener("click", ()=>{
     if(input_text.value != "" ){
+        if(todo_obj == "none") {
+            addCookie();
+            create_obj();
+        }
+
         let list_length = todo_obj.list.length;
         let new_list_data = "";
 
@@ -124,7 +126,7 @@ create_btn.addEventListener("click", ()=>{
         document.cookie = 'todo='+ JSON.stringify(todo_obj);
         load_list_data();
         input_text.value = "";
-        // document.location.reload();
+        document.location.reload();
     }
     else{
         let error_message = document.querySelector(".error_message");
@@ -137,54 +139,70 @@ create_btn.addEventListener("click", ()=>{
 const list_checkbox_list = document.querySelectorAll(".list_checkbox");
 const list_content_list = document.querySelectorAll(".list_content");
 
-// function checkbox_click(){
-    list_checkbox_list.forEach((e,index) => {
-        console.log(e); //comment
-        e.addEventListener("click", (e1)=>{
-            e1.stopPropagation();
-            console.log(index);
-            // console.log("checbox"); //comment
-            let checkbox_index = Array.prototype.indexOf.call(list_checkbox_list, e);
-            // if(list_content_list[checkbox_index].className == "list_content"){
-            if(e.checked){
-                list_content_list[checkbox_index].classList.add("strike");
-                todo_obj.list[checkbox_index].checked = true;
-                document.cookie = "todo="+JSON.stringify(todo_obj);
-                // checkbox_click();
-            }
-            else{
-                list_content_list[checkbox_index].classList.remove("strike");
-                todo_obj.list[checkbox_index].checked = false;
-                document.cookie = "todo="+JSON.stringify(todo_obj);
-                // checkbox_click();
-            }
-            console.log(todo_obj); //comment
-        });
-        
+list_checkbox_list.forEach((e,index) => {
+    e.addEventListener("click", ()=>{
+        let checkbox_index = index;
+        if(e.checked){
+            list_content_list[checkbox_index].classList.add("strike");
+            todo_obj.list[checkbox_index].checked = true;
+            document.cookie = "todo="+JSON.stringify(todo_obj);
+        }
+        else{
+            list_content_list[checkbox_index].classList.remove("strike");
+            todo_obj.list[checkbox_index].checked = false;
+            document.cookie = "todo="+JSON.stringify(todo_obj);
+        }
     });
-// }
-// checkbox_click();
+    
+});
 // -------- checkbox functions end -------
 
 // --------- clear button event start ----------
 const close_btn_list = document.querySelectorAll("a[title='close']");
 close_btn_list.forEach((e,index) => {
     e.addEventListener("click",()=>{
-        // close_btn_index = Array.prototype.indexOf.call(close_btn_list, e);
         close_btn_index = index;
         todo_obj.list.splice(close_btn_index,1);
         document.cookie = "todo="+JSON.stringify(todo_obj);
         
         load_list_data();
-        console.log("complete");
-        // console.log("load complete"); //comment 
-        // checkbox_click();
-        // document.location.reload();
+        document.location.reload();
     });
-    console.log("for each end");//comment
-    // console.log(e); //comment
 });
-console.log("end");//comment
 // --------- clear button event end ----------
+
+// --------- edit content function start ----------
+const list_edit = document.querySelectorAll(".list_edit");
+const edit_panel = document.querySelector(".edit_panel"); 
+const overlay = document.querySelector(".overlay");
+const edit_text = document.querySelector(".edit_text");
+const add_btn = document.querySelector(".add_btn");
+const edit_error_message = document.querySelector(".edit_error_message");
+
+let list_index = 0;
+list_edit.forEach((e,list_index) => {
+    e.addEventListener("click", () => {
+        edit_panel.classList.add("display");
+        edit_text.value = todo_obj.list[list_index].content;
+
+        add_btn.addEventListener("click", () => {
+            if(edit_text.value != ""){
+                todo_obj.list[list_index].content = edit_text.value;
+                document.cookie = "todo="+JSON.stringify(todo_obj);
+                load_list_data();
+                document.location.reload();
+            }
+            else if(edit_text.value == "") {
+                edit_error_message.classList.add("display");
+            }
+        });
+    });
+});
+
+overlay.addEventListener("click", () => {
+    edit_panel.classList.remove("display");
+});
+
+// --------- edit content function end ----------
 
 /****** create list end ******/
