@@ -17,7 +17,7 @@
     <!-- This meta tag is used for mobile device to display the page without any zooming,
        so how much the device is able to fit on the screen is what's shown initially. 
        Remove comments from this tag, when you want to apply media queries to the website. -->
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <!-- Place favicon.ico in the root directory: mathiasbynens.be/notes/touch-icons -->
     <link rel="shortcut icon" href="favicon.ico" />
@@ -48,8 +48,26 @@
         <section>
           <h2>TODO</h2>
           <form action="#FIXME" method="post">
-            <input type="text" name="input_text" class="input_text" placeholder="Enter todo list">
-            <a href="#FIXME" title="create">Create</a>
+            <div class="input_panel">
+              <div class="form_group input">
+                <input type="text" id="inputText" name="input_text" class="input_text" placeholder="Enter todo list">
+                <label for="inputText" class="error_message">Enter task</label>
+              </div>
+              <div class="form_controller">
+                <a href="#FIXME" title="create">Create</a>
+              </div>
+            </div>
+            <ul class="todo_list">
+              <li>
+                <div class="form_group">
+                  <input type="checkbox" id="list" name="list" class="list_checkbox">
+                  <label for="list" class="list_content">text</label>
+                </div>
+                <div class="form_controller">
+                  <a href="#FIXME" title="close">Close</a>
+                </div>
+              </li>
+            </ul>
           </form>
         </section>
       </main>
