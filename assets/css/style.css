@@ -205,7 +205,7 @@ h2 {
   text-align: center;
 }
 
-form {
+.input_panel {
   margin-top: 40px;
   display: flex;
   justify-content: center;
@@ -213,13 +213,24 @@ form {
   gap: 20px;
 }
 
+.input_panel .form_group {
+  flex-basis: 30%;
+}
+
 .input_text {
   padding: 5px 10px;
   margin-right: 20px;
-  flex-basis: 30%;
+  width: -webkit-fill-available;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
   font-size: 16px;
+}
+
+.error_message {
+  padding: 5px 10px;
+  display: none;
+  color: #f00;
+  font-size: 12px;
 }
 
 a[title="create"] {
@@ -239,16 +250,20 @@ a[title="create"]:hover {
   margin: 40px 0;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .todo_list li {
   padding: 5px;
   border: 1px solid #808080;
   border-radius: 4px;
+  margin: 10px 30%;
   display: flex;
   justify-content: space-between;
-  flex-basis: 40%;
+  flex-basis: 100%;
 }
+
+.todo_list .form_group { display: flex; }
 
 .todo_list .list_content {
   margin: 0 20px;
@@ -263,3 +278,6 @@ a[title="create"]:hover {
   font-family: "fontAwesome";
   font-size: 18px;
 }
+
+.strike { text-decoration: line-through; }
+.display { display: block; }
