@@ -111,7 +111,6 @@ create_btn.addEventListener("click", () => {
         }
 
         let list_length = todo_obj.list.length;
-        console.log(list_length);
         let new_list_data = "";
 
         if(list_length == 0) {
