@@ -1,20 +1,20 @@
 /****** create list start ******/
-function addCookie(){
+function addCookie() {
     let list_data = {"list":[]};
     document.cookie = 'todo='+ JSON.stringify(list_data);
-};
-
+}
 
 const todo_list = document.querySelector(".todo_list");
-//todo obj 
+
+// -------- todo obj --------
 let todo_obj = "none";
-function create_obj(){
+let create_obj = () => {
     let cookie_arr = document.cookie.split("; ");
     let todo_avaiable = false;
     let cookie_data = "";
     cookie_arr.forEach(e => {
         cookie_data = e.split("=");
-        if(cookie_data[0]=="todo") {
+        if(cookie_data[0] == "todo") {
             todo_avaiable = true;
         }
         else {
@@ -28,20 +28,19 @@ function create_obj(){
     }
 }
 create_obj();
-console.log(todo_obj);
-//todo obj end
+// -------- todo obj end --------
 
 // -------- load list data --------
-if(todo_obj == "none"){
+if(todo_obj == "none") {
     todo_list.innerHTML = "";
 }
 
-function load_list_data(){
+function load_list_data() {
     todo_list.innerHTML = "";
 
-    for(let i=0; i< todo_obj.list.length; i++){
-        function set_attribute(element, attribute){
-            Object.keys(attribute).forEach(e =>{
+    for(let i = 0; i < todo_obj.list.length; i++) {
+        function set_attribute(element, attribute) {
+            Object.keys(attribute).forEach(e => {
                 element.setAttribute(e, attribute[e]);
             });
         }
@@ -49,7 +48,7 @@ function load_list_data(){
         let input_element = document.createElement("input");
         let input_attribute = {
             type: "checkbox",
-            id: "list"+todo_obj.list[i].id,
+            id: `list ${todo_obj.list[i].id}`,
             name: "list",
             class: "list_checkbox",
         }
@@ -98,37 +97,37 @@ function load_list_data(){
         }
     }
 }
-// load_list_data();
 //--------- load list data end ----------
 
 //------------ new list data start ------------
 const create_btn = document.querySelector("a[title='create']");
 const input_text = document.querySelector(".input_text");
 
-create_btn.addEventListener("click", ()=>{
-    if(input_text.value != "" ){
+create_btn.addEventListener("click", () => {
+    if(input_text.value != "" ) {
         if(todo_obj == "none") {
             addCookie();
             create_obj();
         }
 
         let list_length = todo_obj.list.length;
+        console.log(list_length);
         let new_list_data = "";
 
         if(list_length == 0) {
-            new_list_data = {"id":list_length,"content":input_text.value,"checked":false};
+            new_list_data = { "id":list_length, "content":input_text.value, "checked":false };
         }
         else {
-            new_list_data = {"id":todo_obj.list[list_length-1].id+1,"content":input_text.value,"checked":false};
+            new_list_data = { "id":todo_obj.list[list_length-1].id+1, "content":input_text.value, "checked":false };
         }
 
         todo_obj.list.push(new_list_data);
-        document.cookie = 'todo='+ JSON.stringify(todo_obj);
+        document.cookie = `todo=${JSON.stringify(todo_obj)}`;
         load_list_data();
         input_text.value = "";
         document.location.reload();
     }
-    else{
+    else {
         let error_message = document.querySelector(".error_message");
         error_message.classList.add("display");
     }
@@ -140,36 +139,22 @@ const list_checkbox_list = document.querySelectorAll(".list_checkbox");
 const list_content_list = document.querySelectorAll(".list_content");
 
 list_checkbox_list.forEach((e,index) => {
-    e.addEventListener("click", ()=>{
+    e.addEventListener("click", () => {
         let checkbox_index = index;
-        if(e.checked){
+        if(e.checked) {
             list_content_list[checkbox_index].classList.add("strike");
             todo_obj.list[checkbox_index].checked = true;
-            document.cookie = "todo="+JSON.stringify(todo_obj);
+            document.cookie = `todo=${JSON.stringify(todo_obj)}`;
         }
-        else{
+        else {
             list_content_list[checkbox_index].classList.remove("strike");
             todo_obj.list[checkbox_index].checked = false;
-            document.cookie = "todo="+JSON.stringify(todo_obj);
+            document.cookie = `todo=${JSON.stringify(todo_obj)}`;
         }
     });
     
 });
 // -------- checkbox functions end -------
-
-// --------- clear button event start ----------
-const close_btn_list = document.querySelectorAll("a[title='close']");
-close_btn_list.forEach((e,index) => {
-    e.addEventListener("click",()=>{
-        close_btn_index = index;
-        todo_obj.list.splice(close_btn_index,1);
-        document.cookie = "todo="+JSON.stringify(todo_obj);
-        
-        load_list_data();
-        document.location.reload();
-    });
-});
-// --------- clear button event end ----------
 
 // --------- edit content function start ----------
 const list_edit = document.querySelectorAll(".list_edit");
@@ -179,16 +164,15 @@ const edit_text = document.querySelector(".edit_text");
 const add_btn = document.querySelector(".add_btn");
 const edit_error_message = document.querySelector(".edit_error_message");
 
-let list_index = 0;
 list_edit.forEach((e,list_index) => {
     e.addEventListener("click", () => {
         edit_panel.classList.add("display");
         edit_text.value = todo_obj.list[list_index].content;
 
         add_btn.addEventListener("click", () => {
-            if(edit_text.value != ""){
+            if(edit_text.value != "") {
                 todo_obj.list[list_index].content = edit_text.value;
-                document.cookie = "todo="+JSON.stringify(todo_obj);
+                document.cookie = `todo=${JSON.stringify(todo_obj)}`;
                 load_list_data();
                 document.location.reload();
             }
@@ -204,5 +188,14 @@ overlay.addEventListener("click", () => {
 });
 
 // --------- edit content function end ----------
+
+class list_class{
+    constructor(){
+        this.data_obj = todo_obj;
+    }
+}
+
+export let class_collect = list_class;
+export let function_collect = load_list_data;
 
 /****** create list end ******/
